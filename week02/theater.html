@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Theater</title>
+    <style>
+        body {
+            font-family: "Recursive", "sans serif";
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            margin: 0;
+        }
+
+        h2 {
+            text-align: center;
+            color: brown;
+            background-color: white;
+            border-radius: 10px;
+        }
+
+        select {
+            text-align-last: center;
+        }
+
+        .showcase {
+            display: flex;
+
+            background: rgba(31, 31, 31, 0.89);
+            padding: 5px 10px;
+            color: #777;
+            border-radius: 5px;
+            list-style-type: none;
+            justify-content: space-between;
+        }
+
+        .showcase li {
+            display: flex;
+            margin: 0 10px;
+
+            justify-content: center;
+            align-items: center;
+        }
+
+        .showcase li small {
+            margin: 2px;
+        }
+
+        .seat.available {
+            background-color: #777;
+            width: 15px;
+            height: 12px;
+            margin: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .seat.selected {
+            background-color: #6feaf6;
+            width: 15px;
+            height: 12px;
+            margin: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .seat.occupied {
+            background-color: #fff;
+            width: 15px;
+            height: 12px;
+            margin: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        .seat-container {
+            perspective: 350px;
+        }
+
+        .seat-cursor-y {
+            pointer-events: auto;
+        }
+
+        .seat-cursor-n {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="movie-poster">
+
+    </div>
+
+    <div class="movie-container">
+        <h2>Cinema Paradiso</h2>
+        <label>Select a Movie:</label>
+        <select id="movie">
+            <!--
+            <option value="default"> default </option>
+            <option value="1">Joker</option>
+            <option value="2">Cinema Paradiso</option>
+            -->
+        </select>
+    </div>
+    
+    <ul class="showcase">
+        <li>
+            <div class="seat available"></div>
+            <small>Available</small>
+        </li>
+        <li>
+            <div class="seat selected"></div>
+            <small>Selected</small>
+        </li>
+        <li>
+            <div class="seat occupied"></div>
+            <small>Occupied</small>
+        </li>
+    </ul>
+
+    <div class="seat-container">
+        <div class="screen"></div>
+    </div>
+
+    <p class="text">
+        영화 이름:
+        <span id="movie-chose"></span>
+        <br>
+        인원 수:
+        <span id="count-person"></span>
+        <br>
+        가격:
+        <span id="total-price"></span>
+        <br>
+    </p>
+    <button id="select">
+        Choose
+    </button>
+
+    <script>
+        // 1. 영화 목록 생성
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLOptionElement/Option
+        const movieArr = ["default", "Joker", "Cinema Paradiso", "The Father"];
+        let movieNode = document.getElementById("movie");
+        movieArr.forEach(function(movie) {
+            movieNode.options[movieNode.options.length] = new Option(movie, movieNode.options.length);
+        });
+
+        // 2. 좌석 생성(CSS 동적 적용)
+        const seatMatrix = {
+            row : 6,
+            column : 8
+        }
+        // https://stackoverflow.com/questions/14004117/create-div-and-append-div-dynamically/14004145
+        // https://stackoverflow.com/questions/22574633/applying-css-style-to-dynamically-created-div
+        const seatNode = document.getElementsByClassName("seat-container")[0];
+        for (let i = 0, len = seatMatrix.row; i < len; i++) {
+            let rowDiv = document.createElement("div");
+            rowDiv.className = "row";
+            rowDiv.style.cssText = "display: flex;"; // table-row;
+            for (let j = 0, len = seatMatrix.column; j < len; j++) {
+                let seatDiv = document.createElement("div");
+                seatDiv.className = "seat";
+                seatDiv.style.cssText = "display: inline-block; background-color: #777; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;" // table-cell
+
+                seatDiv.id = "r" + i + "c" + j;
+                // available: 0, selected: 1, occupied: 2
+                seatDiv.dataset.value = 0;
+                rowDiv.appendChild(seatDiv);
+            }
+            seatNode.appendChild(rowDiv);
+        }
+
+        /**
+         * 영화 선택 시
+         * a. 좌석 선택 활성화
+         * b. 선택 영화 노출
+         * c. 해당 영화 좌석 정보 불러오기
+         * 
+         * 좌석 선택 시
+         * a. 선택 좌석 임시 저장
+         * b. 확정 후 해당 영화 좌석 정보 저장
+         */
+        // 3. 영화 선택 시
+        document.getElementById("movie").addEventListener('change', activateSeatWhenMovieChoosed);
+        
+        // 4. 영화 좌석 정보 초기화
+        const bookingArray = new Array();
+        console.log(bookingArray);
+        for (let i = 0, len = movieArr.length; i < len; i++) {
+            if (i === 0) {
+                continue;
+            }
+
+            const bookingInfo = {
+                name : movieArr[i],
+                bookingSeats : []
+            };
+            bookingArray.push(bookingInfo);
+        }
+        console.log(bookingArray);
+
+        // 5. 좌석에 이벤트 걸어주기
+        // https://im-developer.tistory.com/110
+        Array.from(document.querySelectorAll('.seat')) // getElementsByClassName("seat")
+             .forEach(seat => {
+                 seat.addEventListener('click', getSeatInfoWhenMovieChoosed);
+                 seat.addEventListener('click', addSeatsClickedToTempRepository);
+                });
+
+        // https://developer.mozilla.org/en-US/docs/Web/API/HTMLSelectElement/selectedIndex
+        // https://www.includehelp.com/code-snippets/dynamically-add-css-class-with-javascript.aspx
+        // https://stackoverflow.com/questions/16492401/javascript-setting-pointer-events/16492421
+        function activateSeatWhenMovieChoosed() {
+            let sel = document.getElementById("movie");
+            let chosenMovie = sel.options[sel.selectedIndex];
+            console.log(`${chosenMovie.value} : ${chosenMovie.text}`);
+            let seats = document.getElementsByClassName("seat");
+            if (chosenMovie.value !== "0") { // 영화 선택 시
+                // 임시 선택 좌석 초기화
+                seatsSelected.forEach(function(seatSelected) {
+                    let id = "r" + seatSelected.row + "c" + seatSelected.column;
+                    document.getElementById(id).setAttribute("data-value", "0");
+                    document.getElementById(id).style.cssText = "background-color: #777; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                });
+                seatsSelected = [];
+                count = 0;
+                document.getElementById("count-person").innerText = "";
+                document.getElementById("total-price").innerText = "";
+
+                // 좌석 정보 초기화
+                const bookingSeats = bookingArray[chosenMovie.value - 1].bookingSeats;
+                console.log(`예약정보 : ${bookingSeats}`);
+                Array.prototype.forEach.call(seats, seat => {
+                    // seat.classList.add("seat-cursor-y");
+                    // seat.classList.remove("seat-cursor-n");
+                    seat.style.pointerEvents = "auto";
+
+                    // 좌석 정보 초기화
+                    seat.style.cssText = "background-color: #777; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                    seat.setAttribute("data-value", "0");
+                });
+
+                // 확정 좌석 표시(미비)
+                bookingSeats.forEach(function(bookingSeat) {
+                    console.log(bookingSeat);
+                    let id = "r" + bookingSeat.row + "c" + bookingSeat.column;
+                    console.log(`${id}`);
+                    document.getElementById(id).style.cssText = "background-color: #fff; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                });
+
+                document.getElementById("movie-chose").innerText = chosenMovie.text;
+            } else {
+                Array.prototype.forEach.call(seats, seat => {
+                    // seat.classList.add("seat-cursor-n");
+                    // seat.classList.remove("seat-cursor-y");
+
+                    seat.style.pointerEvents = "none";
+                });
+                document.getElementById("movie-chose").innerText = "";
+            }
+            
+        }
+
+        // 6. 버튼 클릭 시 선택 좌석 예약 좌석으로 저장
+        document.getElementById("select").addEventListener('click', saveTempRepositoryToBookingInfo);
+
+        // https://developer.mozilla.org/ko/docs/Learn/HTML/Howto/Use_data_attributes
+        function getSeatInfoWhenMovieChoosed() {
+            // 영화가 선택된 경우에만 활성화
+
+        }
+
+        let seatsSelected = [];
+        let count = 0;
+        const ticketPrice = 10;
+        function addSeatsClickedToTempRepository(event) {
+            // 영화가 선택된 경우에만 활성화(추후 제거)
+            let sel = document.getElementById("movie");
+            let chosenMovie = sel.options[sel.selectedIndex];
+            if (chosenMovie.value === "0") { // 영화 미선택 시
+                return;
+            }
+
+            console.log(event.target);
+            // console.log(event.target.dataset.value);
+            console.log(event.target.getAttribute("data-value"));
+            let seatNode = event.target;
+            // seatValue를 변수에 담으면 동적 비교 불가
+            // let seatValue = event.target.dataset.value;
+            // let seatValue = event.target.getAttribute("data-value");
+            // console.log(`seatValue : ${seatValue}`);
+            let seatId = event.target.id;
+
+            let row = seatId.substring(seatId.indexOf("r") + 1, seatId.indexOf("c"));
+            let column = seatId.substring(seatId.indexOf("c") + 1);
+            console.log(`${row} : ${column} : ${event.target.getAttribute("data-value")}`);
+            if (event.target.getAttribute("data-value") === "2") {
+                console.log(`${row} : ${column} : 이미 예약된 좌석입니다.`);
+            } else if (event.target.getAttribute("data-value") === "1") {
+                // seatNode.classList.add("available");
+                seatNode.style.cssText = "background-color: #777; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                // seatValue = "0";
+                event.target.setAttribute("data-value", "0");
+                count = (count !== 0 ? --count : count);
+            } else { // seatValue === "0"
+                // seatNode.classList.add("selected");
+                seatNode.style.cssText = "background-color: #6feaf6; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                // seatValue = "1";
+                event.target.setAttribute("data-value", "1");
+                count++;
+            }
+            
+            seatsSelected.push({
+                row : row,
+                column : column,
+            });
+
+            // 인원수 및 가격 설정
+            document.getElementById("count-person").innerText = count + "명";
+            document.getElementById("total-price").innerText = count * ticketPrice + "$";
+
+            return seatsSelected;
+        }
+
+        function saveTempRepositoryToBookingInfo() {
+            // 영화가 선택된 경우에만 활성화(추후 제거)
+            const sel = document.getElementById("movie");
+            const chosenMovie = sel.options[sel.selectedIndex];
+            if (chosenMovie.value === "0") { // 영화 미선택 시
+                return;
+            }
+            
+            // default는 제외하므로 1을 빼주는데 리팩토링 필요(매직넘버)
+            console.log(bookingArray[chosenMovie.value - 1]);
+            console.log(bookingArray[chosenMovie.value - 1].bookingSeats);
+            bookingArray[chosenMovie.value - 1].bookingSeats.push(seatsSelected);
+
+            // 좌석 예약 확정 및 색 변경
+            seatsSelected.forEach(function(seatSelected) {
+                console.log(seatSelected);
+                let seatId = "r" + seatSelected.row + "c" + seatSelected.column;
+                document.getElementById(seatId).style.cssText = "background-color: #fff; width: 15px; height: 12px; margin: 5px; border-top-left-radius: 5px; border-top-right-radius: 5px;";
+                document.getElementById(seatId).setAttribute("data-value", "2");
+            });
+
+            // 초기화
+            seatsSelected = [];
+            count = 0;
+            document.getElementById("count-person").innerText = "";
+            document.getElementById("total-price").innerText = "";
+        }
+    </script>
+</body>
+</html>
