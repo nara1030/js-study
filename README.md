@@ -12,5 +12,6 @@ JS Study
 ## 진행
 1. [1주차](week01/week_01.md)
 2. [2주차](week02/week_02.md)
-3. .
+3. [3주차](week03/week_03.md)
+4. .
 
