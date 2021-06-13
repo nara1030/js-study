@@ -20,7 +20,16 @@
     - [ ] HackerRank] [REST API](https://www.hackerrank.com/skills-verification/rest_api_intermediate)
 
 - - -
-* [How to convert letters to numbers with Javascript?](https://stackoverflow.com/questions/22624379/how-to-convert-letters-to-numbers-with-javascript)
-* [JavaScript - Replace all commas in a string](https://stackoverflow.com/questions/10610402/javascript-replace-all-commas-in-a-string)
+1. 로그인
+    * [OAuth2 인증방식](https://velog.io/@piecemaker/OAuth2-%EC%9D%B8%EC%A6%9D-%EB%B0%A9%EC%8B%9D%EC%97%90-%EB%8C%80%ED%95%B4-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90)
+    * [OAuth2 로그인 적용방법](https://imki123.github.io/posts/30/)
+    * [카카오 로그인 이해하기](https://developers.kakao.com/docs/latest/ko/kakaologin/common#intro)
+    * [카카오 로그인 - JS](https://developers.kakao.com/docs/latest/ko/kakaologin/js)
+    * 기타
+        * [인증과 인가](https://gintrie.tistory.com/36)
+        * [리다이렉트와 포워드](https://doublesprogramming.tistory.com/63)
+2. 알고리즘
+    * [How to convert letters to numbers with Javascript?](https://stackoverflow.com/questions/22624379/how-to-convert-letters-to-numbers-with-javascript)
+    * [JavaScript - Replace all commas in a string](https://stackoverflow.com/questions/10610402/javascript-replace-all-commas-in-a-string)
 
 ##### [목차로 이동](#목차)

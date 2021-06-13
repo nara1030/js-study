@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- kakao -->
+    <script type="text/javascript" src="../js/kakao.js"></script>
+    <title>Document</title>
+</head>
+<body>
+    <a id="kakao-login-btn">Log-in</a>
+    <a id="kakao-logout-btn">Log-out</a>
+
+    <script>
+        Kakao.init('11a66a4bd0a6bd32c17d0677b0d6fede');
+        Kakao.isInitialized();
+
+        console.log(`Kakao isInitialized() : ${Kakao.isInitialized()}`);
+
+        /* Kakao.Auth.createLoginButton({
+            container: '#kakao-login-btn',
+            success: function(response) {
+                console.log(`createLoginButton success: ${JSON.stringify(response)}`);
+            },
+            fail: function(error) {
+                console.log(`createLoginButton fail: ${JSON.stringify(error)}`);
+            }
+        }); */
+
+        var kakao_login_btn = document.getElementById("kakao-login-btn");
+        kakao_login_btn.addEventListener('click', function(event) {
+        	Kakao.Auth.login({
+        		success: function(response) {
+        			console.log(`login success: ${JSON.stringify(response)}`);
+        			alert('Log-in success');
+        			
+        			Kakao.API.request({
+        	            url: '/v2/user/me',
+        	            success: function(response) {
+        	            	console.log(`request success: ${JSON.stringify(response)}`);
+        	            },
+        	            fail: function(error) {
+        	                console.log(`request fail: ${JSON.stringify(error)}`);
+        	            }
+        	        });
+        		},
+        		fail: function(error) {
+        			console.log(`login fail: ${JSON.stringify(error)}`);
+        			alert('Log-in failed');
+        		}
+        	});
+        });
+        
+        var kakao_logout_btn = document.getElementById("kakao-logout-btn");
+        kakao_logout_btn.addEventListener('click', function(event) {
+        	if (!Kakao.Auth.getAccessToken()) { // if token does not exist
+        		alert('Not logged in');
+        		return;
+        	}
+        	
+        	Kakao.Auth.logout(function() {
+        		alert(`Log-out success\naccess token -> ${Kakao.Auth.getAccessToken()}`);
+        	});
+        	
+        	/* Kakao.API.request({
+        		url: 'v1/user/unlink',
+        		success: function(response) {
+        			console.log(`logout success: ${JSON.stringify(response)}`);
+        			alert('Log-out success');
+        		},
+        		fail: function(error) {
+        			console.log(`logout fail: ${JSON.stringify(error)}`);
+        			alert('Log-out failed');
+        		},
+        	}); */
+        });
+    </script>
+</body>
+</html>
