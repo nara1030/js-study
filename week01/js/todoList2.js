@@ -38,7 +38,7 @@ function addItem(itemText) {
     const newItem = {};
     newItem.text = itemText;
     // add unique property(id) for deleting item
-    newItem.id = Date.now();
+    newItem.id = 't' + Date.now();
     console.log(newItem.id, typeof newItem.id);
     todoList.push(newItem);
     
@@ -73,18 +73,16 @@ function removeItem(itemId) {
     console.log(itemId, typeof itemId);
 
     // 1. clear item from screen
-    const liToBeRemoved = ul.querySelector(String(itemId));
-    console.log(liToBeRemoved);
-    // liToBeRemoved.remove();
+    const liToBeRemoved = ul.querySelector('#' + String(itemId));
+    liToBeRemoved.remove();
     
     // 2. remove item from json array
     todoList = todoList.filter(element => {
-        // console.log(`${typeof element.id} : ${typeof parseInt(itemId)}`);
-        return element.id !== parseInt(itemId);
+        return element.id !== itemId;
     });
 
     // 3. remove item from localStorage
-    // localStorage.setItem('todoList', JSON.stringify(todoList));
+    localStorage.setItem('todoList', JSON.stringify(todoList));
 }
 
 // when user refresh the screen

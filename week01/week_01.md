@@ -24,14 +24,15 @@
     * class 추가 시 className 대신 classList를 통하면 기존 적용 값 유지
 2. js에서 html을 가져오는 방법으로 `querySelector()`를 권장
     * `getElementById()`나 `getElementsByClassName()`과 다르게 css 선택자로 요소 선택 가능
+    * 다만 `querySelector()`는 숫자로 시작하는 css 선택자를 지원하지 않으므로 id 생성 시 임의로 문자 t를 붙여줌([참고](https://stackoverflow.com/questions/37270787/uncaught-syntaxerror-failed-to-execute-queryselector-on-document))
 3. 기본적으로 `const`, 필요시 `let` 사용
     * 두 개 이상 하드 코딩 시 `const`로 선언하면 오타 검출 가능
 4. 이벤트를 추가하는 방법에는 두 가지가 있으나, `addEventListener()` 권장
-    * .
-    * 자바스크립트 파라미터. event 관례.
-    * `event.prevent...`는 html 기본 동작 방지
-    * `forEach` 시 파라미터 item
-5. input 외부 form 태그로 감싸야..
+    * 하나는 `onClick()`이었나..?
+    * 이벤트 리스너, 즉 콜백 함수는 파라미터 여부와 관계 없으나 파라미터 설정을 해주면 자바스크립트가 호출 시 함께 넘겨줌. 이 파라미터는 event로 기재하는 게 관례.
+    * `event.preventDefault()`는 html 기본 동작 방지
+    * 한편 배열에서 사용할 수 있는 `forEach()` 메소드도 콜백 함수 전달 가능. 이때 콜백 함수도 파라미터 설정을 해주면 자바스크립트가 호출 시 배열의 요소를 함께 넘겨줌.
+5. input 외부 form 태그로 감싸야..? 다시 들어야..
 6. localStorage에는 `string`만 저장
     * localStorage에 해당 key에 해당하는 값이 없는 경우 `null` 반환
 7. `console.log()` 출력 시 `null`은 `null`로, `""`는 안 찍힘
@@ -39,7 +40,8 @@
 8. 기타
     * alert창 커스터마이징 불가 단점, 모달 사용
     * 함수 정의 내부 함수 호출
-    * `appendChild()` 이후 `innerText` 설정
+    * `appendChild()` 이후 `innerText` 설정. 순서 무관?
+    * `HTMLCollection`과 `NodeList`의 차이
 
 - - -
 참고
