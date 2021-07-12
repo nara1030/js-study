@@ -37,7 +37,11 @@
     * localStorage에 해당 key에 해당하는 값이 없는 경우 `null` 반환
 7. `console.log()` 출력 시 `null`은 `null`로, `""`는 안 찍힘
     * `console.dir()`
-8. 삭제 시...
+8. 삭제 시 `event.target.parentElement`를 통해 삭제 html 태그 특정 가능
+    * `event.target.parentNode` 역시 사용 가능([참고](https://stackoverflow.com/questions/8685739/difference-between-dom-parentnode-and-parentelement))
+    * [How to remove the parent element using plain Javascript](https://stackoverflow.com/questions/2727717/how-to-remove-the-parent-element-using-plain-javascript)
+    * 기존에 삭제 함수 파람으로 `item`이 아닌 `itemId`를 넘겨주었는데, 이 경우 `querySelector()` 숫자 css 선택자 지원하지 않아서 추가 시 문자 덧붙이는 불필요 코드 생김
+        * 더욱이 타 함수는 `item`을 매개변수로 받는데 삭제 함수만 `itemId`를 매개로 받는 비대칭성
 9. 기타
     * alert창 커스터마이징 불가 단점, 모달 사용
     * 함수 정의 내부 함수 호출
