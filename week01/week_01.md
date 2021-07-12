@@ -37,7 +37,8 @@
     * localStorage에 해당 key에 해당하는 값이 없는 경우 `null` 반환
 7. `console.log()` 출력 시 `null`은 `null`로, `""`는 안 찍힘
     * `console.dir()`
-8. 기타
+8. 삭제 시...
+9. 기타
     * alert창 커스터마이징 불가 단점, 모달 사용
     * 함수 정의 내부 함수 호출
     * `appendChild()` 이후 `innerText` 설정. 순서 무관?

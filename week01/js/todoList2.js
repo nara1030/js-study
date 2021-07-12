@@ -10,6 +10,8 @@ const todoInput = document.querySelector('#todo-form input:first-child');
 const todoSubmit = document.querySelector('#todo-form button');
 const ul = document.querySelector('#todo-list');
 
+const TODOS_KEY = 'todoList';
+
 // JSONArray
 let todoList = [];
 
@@ -38,7 +40,7 @@ function addItem(itemText) {
     const newItem = {};
     newItem.text = itemText;
     // add unique property(id) for deleting item
-    newItem.id = 't' + Date.now();
+    newItem.id = Date.now();
     console.log(newItem.id, typeof newItem.id);
     todoList.push(newItem);
     
@@ -59,35 +61,35 @@ function drawItem(item) {
 }
 
 function saveItem() {
-    localStorage.setItem('todoList', JSON.stringify(todoList));
+    localStorage.setItem(TODOS_KEY, JSON.stringify(todoList));
 }
 
 todoForm.addEventListener('click', onAddBtnClicked);
 
 function onRemoveBtnClicked(event) {
-    const itemId = event.target.parentNode.id;
-    removeItem(itemId);
+    console.log(event.target.parentNode, event.target.parentElement);
+    deleteItem(event.target.parentNode);
 }
 
-function removeItem(itemId) {
-    console.log(itemId, typeof itemId);
+function deleteItem(item) {
+    console.log(item, typeof item);
 
     // 1. clear item from screen
-    const liToBeRemoved = ul.querySelector('#' + String(itemId));
+    const liToBeRemoved = item;
     liToBeRemoved.remove();
     
     // 2. remove item from json array
     todoList = todoList.filter(element => {
-        return element.id !== itemId;
+        return element.id !== item.id;
     });
 
     // 3. remove item from localStorage
-    localStorage.setItem('todoList', JSON.stringify(todoList));
+    saveItem();
 }
 
 // when user refresh the screen
 function initiate() {
-    const savedTodoList = localStorage.getItem('todoList');
+    const savedTodoList = localStorage.getItem(TODOS_KEY);
     if (savedTodoList === null) {
         return;
     }
