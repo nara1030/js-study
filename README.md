@@ -14,7 +14,8 @@ JS Study
 
 1. to do list
 2. simple shop
-3.
+3. index page
+4.
 
 - - -
 한편 개발 환경 및 세팅 등에 대해 기록을 남겨둔다.
